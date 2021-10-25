@@ -6,7 +6,7 @@ htcConfig: agent-configmap
 
 redis_certificates_directory: ""
 
-replicaCount: 5
+replicaCount: 3
 
 terminationGracePeriodSeconds: 1500
 
@@ -75,7 +75,7 @@ resourcesLambdaServer:
     cpu: 920m
     memory: 3966Mi
   requests:
-    cpu: 700m
+    cpu: 50m
     memory: 3966Mi
 
 nodeSelector: {}
