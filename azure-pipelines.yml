@@ -472,7 +472,6 @@ stages:
           sudo apt-get update && sudo apt-get install terraform
         displayName: Install terraform
       - script : |
-          set -e
           sudo  apt update && sudo apt install -y docker.io make
           sudo chown :sudo /var/run/docker.sock
           cp configure/onpremise-linux-config.conf ./envvars.conf
