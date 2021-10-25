@@ -202,8 +202,6 @@ stages:
           mkdir -p dist
           cp -r $(System.ArtifactsDirectory)/HTCGridApi/$(buildmode)/. $(System.ArtifactsDirectory)/HttpApi/$(buildmode)/. $(System.ArtifactsDirectory)/Armonik.api/$(buildmode)/. dist/.
           export ARMONIK_NUGET_REPOS=$PWD/dist
-          echo $ARMONIK_NUGET_REPOS
-          ls $ARMONIK_NUGET_REPOS
           dotnet build applications/ArmonikSamples/Client/Client.csproj -c $(buildmode)
           dotnet pack applications/ArmonikSamples/Client/Client.csproj -c $(buildmode) -o $(Build.ArtifactStagingDirectory)/DotnetClient/$(buildmode)
           dotnet publish applications/ArmonikSamples/Client/Client.csproj -c $(buildmode) -o $(Build.ArtifactStagingDirectory)/DotnetClient/$(buildmode)
@@ -262,6 +260,7 @@ stages:
           set -e
           mkdir -p dist
           cp -r $(System.ArtifactsDirectory)/HTCGridApi/$(buildmode)/. $(System.ArtifactsDirectory)/HttpApi/$(buildmode)/. $(System.ArtifactsDirectory)/Armonik.api/$(buildmode)/. dist/.
+          export ARMONIK_NUGET_REPOS=$PWD/dist
           dotnet build applications/ArmonikSamples/packages/images/ArmonikExecutor.csproj -c $(buildmode)
           dotnet pack applications/ArmonikSamples/packages/images/ArmonikExecutor.csproj -c $(buildmode) -o $(Build.ArtifactStagingDirectory)/DotnetServer/$(buildmode)
           dotnet publish applications/ArmonikSamples/packages/images/ArmonikExecutor.csproj -c $(buildmode) -o $(Build.ArtifactStagingDirectory)/DotnetServer/$(buildmode)
