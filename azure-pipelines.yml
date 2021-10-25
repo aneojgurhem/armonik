@@ -256,12 +256,12 @@ stages:
         inputs:
           buildType: 'current'
           downloadType: 'single'
-          artifactName: HTCCommon
+          artifactName: Armonik.api
           downloadPath: '$(System.ArtifactsDirectory)'
       - script: |
           set -e
           mkdir -p dist
-          cp -r $(System.ArtifactsDirectory)/HTCGridApi/$(buildmode)/. $(System.ArtifactsDirectory)/HttpApi/$(buildmode)/. $(System.ArtifactsDirectory)/HTCCommon/$(buildmode)/. dist/.
+          cp -r $(System.ArtifactsDirectory)/HTCGridApi/$(buildmode)/. $(System.ArtifactsDirectory)/HttpApi/$(buildmode)/. $(System.ArtifactsDirectory)/Armonik.api/$(buildmode)/. dist/.
           dotnet build applications/ArmonikSamples/packages/images/ArmonikExecutor.csproj -c $(buildmode)
           dotnet pack applications/ArmonikSamples/packages/images/ArmonikExecutor.csproj -c $(buildmode) -o $(Build.ArtifactStagingDirectory)/DotnetServer/$(buildmode)
           dotnet publish applications/ArmonikSamples/packages/images/ArmonikExecutor.csproj -c $(buildmode) -o $(Build.ArtifactStagingDirectory)/DotnetServer/$(buildmode)
