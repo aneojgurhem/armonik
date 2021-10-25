@@ -9,7 +9,7 @@ resources:
 
 variables:
 - group: publish-keys
-- name : TAGVar 
+- name : TAGVar
   value: 'armonik-dev-$(Build.BuildId)'
 - name : buildsuffix
   value: ""
@@ -24,7 +24,7 @@ stages:
       matrix:
         Mode-Release:
            buildmode: 'Release'
-           buildsuffix: ''  
+           buildsuffix: ''
 
     pool:
       name : $(AgentPoolName)
@@ -34,8 +34,35 @@ stages:
         inputs:
           packageType: 'sdk'
           version: '5.0.x'
+      - script : |
+          set -xe
+          curl -fsSL -o get_helm.sh https://raw.githubusercontent.com/helm/helm/main/scripts/get-helm-3
+          chmod 700 get_helm.sh
+          ./get_helm.sh
+        displayName: Install Helm
       - script: |
           set -xe
+          sudo curl -fsSL https://github.com/k3s-io/k3s/releases/latest/download/k3s -o /usr/local/bin/k3s
+          sudo chmod 755 /usr/local/bin/k3s
+          sudo ln -s k3s /usr/local/bin/kubectl
+          sudo ln -s k3s /usr/local/bin/crictl
+          sudo cp cicd/azure/k3s.service /etc/systemd/system/
+          sudo systemctl daemon-reload
+          sudo systemctl start k3s
+          mkdir -p ~/.kube
+          cp /etc/rancher/k3s/k3s.yaml ~/.kube/config
+        displayName: Install K3s
+      - script : |
+          set -xe
+          sudo apt-get update && sudo apt-get install -y gnupg software-properties-common curl
+          sudo curl -fsSL https://apt.releases.hashicorp.com/gpg | sudo apt-key add -
+          sudo apt-add-repository "deb [arch=amd64] https://apt.releases.hashicorp.com $(lsb_release -cs) main"
+          sudo apt-get update && sudo apt-get install terraform
+        displayName: Install terraform
+      - script: |
+          set -xe
+          sudo apt-get update -y && sudo apt-get install -y awscli docker.io python3 python3-pip python3-wheel jq
+          sudo chown :sudo /var/run/docker.sock
           export AWS_ACCESS_KEY_ID=$(AWSID)
           export AWS_SECRET_ACCESS_KEY=$(AWSAccessKey)
           export AWS_DEFAULT_REGION=$(AWSRegion)
@@ -45,6 +72,7 @@ stages:
           aws ecr get-login-password --region $ARMONIK_REGION | docker login --username AWS --password-stdin $ARMONIK_DOCKER_REGISTRY
           make all
           make init-grid-state
+          set +e
           make init-grid-deployment
           make apply-dotnet-runtime
           kubectl apply -f ./generated/single-task-dotnet5.0.yaml
