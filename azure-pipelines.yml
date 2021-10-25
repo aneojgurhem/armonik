@@ -63,7 +63,7 @@ stages:
           f() { local rc; "$@" ; rc=$? ; [ "${RC:-0}" = 0 ] && RC="$rc" ; }
           g() { return "${RC:-0}" ; }
           set -xe
-          sudo apt-get update -y && sudo apt-get install -y awscli docker.io python3 python3-pip python3-wheel jq
+          sudo apt-get update -y && sudo apt-get install -y awscli docker.io python3 python3-pip python3-wheel jq python-is-python3
           sudo chown :sudo /var/run/docker.sock
           export AWS_ACCESS_KEY_ID=$(AWSID)
           export AWS_SECRET_ACCESS_KEY=$(AWSAccessKey)
