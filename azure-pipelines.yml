@@ -14,7 +14,7 @@ parameters:
 variables:
 - group: publish-keys
 - name : TAGVar
-  value: '$(parameters.TAGInput)$(buildsuffix)'
+  value: '${{parameters.TAGInput}}$(buildsuffix)'
 - name : buildsuffix
   value: ""
 
