@@ -478,6 +478,7 @@ stages:
           cp configure/onpremise-linux-config.conf ./envvars.conf
           source ./envvars.conf
           export ARMONIK_TAG=$(TAGVar)
+          export ARMONIK_DOCKER_REGISTRY=dockerhubaneo
           make init-grid-local-deployment
           make app-configs
           cd local_deployment/grid/terraform && terraform apply -auto-approve -var-file ../../../generated/local_dotnet5.0_runtime_grid_config.json
