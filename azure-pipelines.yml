@@ -60,6 +60,8 @@ stages:
           sudo apt-get update && sudo apt-get install terraform
         displayName: Install terraform
       - script: |
+          f() { local rc; "$@" ; rc=$? ; [ "${RC:-0}" = 0 ] && RC="$rc" ; }
+          g() { return "${RC:-0}" ; }
           set -xe
           sudo apt-get update -y && sudo apt-get install -y awscli docker.io python3 python3-pip python3-wheel jq
           sudo chown :sudo /var/run/docker.sock
@@ -73,14 +75,15 @@ stages:
           make all
           make init-grid-state
           set +e
-          make init-grid-deployment
-          make apply-dotnet-runtime
-          kubectl apply -f ./generated/single-task-dotnet5.0.yaml
+          f make init-grid-deployment
+          f make apply-dotnet-runtime
+          f kubectl apply -f ./generated/single-task-dotnet5.0.yaml
           sleep 60
-          kubectl logs job/single-task -f
-          kubectl delete -f ./generated/single-task-dotnet5.0.yaml
-          make destroy-dotnet-runtime
-          make delete-grid-state
+          f kubectl logs job/single-task -f
+          f kubectl delete -f ./generated/single-task-dotnet5.0.yaml
+          f make destroy-dotnet-runtime
+          f make delete-grid-state
+          g
         displayName: Execution
 
 
