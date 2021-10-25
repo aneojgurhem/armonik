@@ -7,16 +7,20 @@ trigger:
 resources:
 - repo: self
 
+parameters:
+  - name: TAGInput
+    default: 'armonik-dev-$(Build.BuildId)'
+
 variables:
 - group: publish-keys
 - name : TAGVar
-  value: 'armonik-dev-$(Build.BuildId)$(buildsuffix)'
+  value: '$(parameters.TAGInput)$(buildsuffix)'
 - name : buildsuffix
   value: ""
 
 stages:
-- stage: Local
-  displayName: Local Deployment / Test
+- stage: LocalBuildPush
+  displayName: Local Build and Push
   jobs:
   - job: BuildHTTPAPI
     displayName: Build HTTP API
@@ -430,16 +434,12 @@ stages:
           docker push dockerhubaneo/agent:$(TAGVar)
         displayName: Build and Push agent to DockerHub
 
+- stage: LocalDeployment
+  displayName: Local Deployment with pull from dockerhub
+  dependsOn: LocalBuildPush
+  jobs:
   - job: DeployLocalJob
     displayName: Deploy Local Job
-    dependsOn:
-      - BuildAgent
-      - BuildDotnetClient
-      - BuildDotnetServer
-      - BuildCancelTasks
-      - BuildGetResults
-      - BuildTtlChecker
-      - BuildSubmitTasks
     pool:
       name : $(AgentPoolName)
       vmImage : 'ubuntu-20.04'
@@ -481,7 +481,7 @@ stages:
           export ARMONIK_DOCKER_REGISTRY=dockerhubaneo
           make init-grid-local-deployment
           make app-configs
-          cat ../../../generated/local_dotnet5.0_runtime_grid_config.json
+          cat generated/local_dotnet5.0_runtime_grid_config.json
           cd local_deployment/grid/terraform && terraform apply -auto-approve -var-file ../../../generated/local_dotnet5.0_runtime_grid_config.json
           kubectl get po -A
           cd -
