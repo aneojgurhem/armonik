@@ -489,3 +489,5 @@ stages:
           sleep 50
           kubectl logs job/single-task -f
           kubectl delete -f ./generated/local-single-task-dotnet5.0.yaml
+          make destroy-dotnet-local-runtime
+
