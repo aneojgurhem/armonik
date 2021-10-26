@@ -489,5 +489,5 @@ stages:
           sleep 50
           kubectl logs job/single-task -f
           kubectl delete -f ./generated/local-single-task-dotnet5.0.yaml
-          make destroy-dotnet-local-runtime
+          cd local_deployment/grid/terraform && terraform destroy -auto-approve -var-file ../../../generated/local_dotnet5.0_runtime_grid_config.json
 
